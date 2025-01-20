@@ -22,7 +22,7 @@
           <tr v-for="task in tasks" :key="task.id">
             <td>{{ task.title }}</td>
             <td class="task-description">{{ task.description }}</td>
-            <td>{{ task.priority.value }}</td>
+            <td>{{ task.priority }}</td>
             <td>{{ task.status }}</td>
             <td>{{ formattedTime(task) }}</td>
             <td>
@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import TaskForm from './components/TaskForn.vue'
+import TaskForm from './components/TaskForm.vue'
 import CreateButton from 'primevue/button'
 
 export default {

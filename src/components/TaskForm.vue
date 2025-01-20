@@ -32,13 +32,15 @@
         <div class="p-d-flex p-jc-between p-ai-center p-mb-3">
           <label for="priority" class="form-label">Priority</label>
 
-          <Dropdown
-            id="priority"
-            v-model="priority"
-            :options="priorities"
-            optionLabel="label"
-            class="form-input w-full"
+          <AutoComplete
+            v-model="selectedPriority"
+            :suggestions="filteredPriorities"
+            :field="'name'"
+            :force-selection="true"
+            :dropdown="true"
+            @complete="filterPriorities"
             placeholder="Select Priority"
+            class="dropdown-input"
           />
         </div>
 
@@ -54,35 +56,41 @@
 <script>
 import InputText from 'primevue/inputtext'
 import CustomTextarea from 'primevue/textarea'
-import Dropdown from 'primevue/dropdown'
+
+import AutoComplete from 'primevue/autocomplete'
+
 import CustomButton from 'primevue/button'
 
 export default {
   components: {
     InputText,
     CustomTextarea,
-    Dropdown,
+    // Dropdown,
     CustomButton,
+    AutoComplete,
   },
   data() {
     return {
       title: '',
       description: '',
-      priority: '',
-      priorities: [
-        { label: 'High', value: 'High' },
-        { label: 'Medium', value: 'Medium' },
-        { label: 'Low', value: 'Low' },
-      ],
+      priorities: ['High', 'Medium', 'Low'],
+      selectedPriority: null,
+      filteredPriorities: [],
     }
   },
   methods: {
+    filterPriorities(event) {
+      const query = event.query.toLowerCase()
+      this.filteredPriorities = this.priorities.filter((priority) =>
+        priority.toLowerCase().includes(query),
+      )
+    },
     createTask() {
       const newTask = {
         id: Date.now(),
         title: this.title,
         description: this.description,
-        priority: this.priority,
+        priority: this.selectedPriority,
         status: 'To Do',
         timeElapsed: 0,
         timerRunning: false,
@@ -93,7 +101,7 @@ export default {
       // Reset form fields after task creation
       this.title = ''
       this.description = ''
-      this.priority = ''
+      this.selectedPriority = ''
     },
   },
 }
@@ -106,6 +114,7 @@ export default {
   text-align: center;
   color: #2c3e50;
   font-family: Arial, Helvetica, sans-serif;
+  margin-bottom: 10px;
 }
 
 .task-form {
@@ -134,7 +143,16 @@ h3 {
   padding: 10px;
   border-radius: 5px;
   font-family: Arial, Helvetica, sans-serif;
-  border: 1px solid #2c3e50;
+  border: 1px solid #80808061;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  color: #2c3e50;
+}
+
+.dropdown-input {
+  width: 100%;
+  border-radius: 5px;
+  font-family: Arial, Helvetica, sans-serif;
   box-sizing: border-box;
   background-color: #ffffff;
   color: #2c3e50;
@@ -177,6 +195,75 @@ textarea.form-input {
 
 .form-button:hover {
   background-color: #357ab7;
+}
+
+.p-autocomplete input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  font-family: Arial, Helvetica, sans-serif;
+  border: 1px solid #2c3e50;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  color: #2c3e50;
+  transition: border-color 0.3s ease;
+}
+
+.p-autocomplete input:focus {
+  border-color: #4a90e2; /* Blue border on focus */
+  outline: none;
+}
+
+/* Style for the suggestions dropdown */
+.p-autocomplete-panel {
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-height: 250px;
+  overflow-y: auto;
+  background-color: #ffffff;
+}
+
+/* Style for each suggestion item */
+.p-autocomplete-item {
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #2c3e50;
+}
+
+/* Hover effect for suggestion items */
+.p-autocomplete-item:hover {
+  background-color: #f0f0f0;
+  color: #4a90e2;
+}
+
+/* Style when item is selected */
+.p-autocomplete-item.p-highlight {
+  background-color: #4a90e2;
+  color: white;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .p-autocomplete input {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .p-autocomplete-panel {
+    max-height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .p-autocomplete input {
+    padding: 6px;
+    font-size: 12px;
+  }
+
+  .p-autocomplete-panel {
+    max-height: 180px;
+  }
 }
 
 @media (max-width: 768px) {
